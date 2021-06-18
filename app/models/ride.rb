@@ -3,26 +3,26 @@ class Ride < ApplicationRecord
     belongs_to :attraction
 
     def take_ride
-        if ticket_check && height_check
+        if too_poor && too_short
             sorry_tickets + " " + sorry_height
-        elsif height_check
+        elsif too_short
            "Sorry. "+ sorry_height
-        elsif ticket_check
+        elsif too_poor
             sorry_tickets
         else 
-            user.tickets = user.tickets - attraction.tickets
-            user.nausea =  user.nausea + attraction.nausea_rating
-            user.happiness = user.happiness + attraction.happiness_rating
+            user.tickets -= attraction.tickets
+            user.nausea += attraction.nausea_rating
+            user.happiness += attraction.happiness_rating
             self.user.save
             "Thanks for riding the #{attraction.name}!"
         end
     end
 
-    def ticket_check
+    def too_poor
         self.user.tickets < self.attraction.tickets
     end
 
-    def height_check
+    def too_short
         self.user.height < self.attraction.min_height
     end
 
